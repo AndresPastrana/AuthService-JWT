@@ -1,5 +1,8 @@
 const { request, response } = require("express");
 const jwt = require("jsonwebtoken");
+const { generateToken } = require("../helpers/jwt");
+const bcrypt = require("bcrypt");
+const CredentialsModel = require("../models/Credentials");
 
 // Autentica el usuario en el sitema , genera u token de acceso y un token de refresh
 const login = (req = request, resp = response) => {
@@ -31,8 +34,31 @@ const login = (req = request, resp = response) => {
   }
 };
 
-const register = (req = request, resp = response) => {
-  return resp.json({ ok: true });
+const register = async (req = request, resp = response) => {
+  const { email, password } = req.body;
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const cred = new CredentialsModel({ email, password: hashedPassword });
+
+  const payload = { uid: cred._id };
+
+  const [access_token, refresh_token] = await Promise.all([
+    await generateToken(payload, "access"),
+    await generateToken(payload, "refresh"),
+  ]);
+
+  cred.refreshToken = refresh_token;
+
+  const user = await cred.save();
+
+  return resp.json({
+    ok: "Everything went ok",
+    access_token,
+    refresh_token: user.refreshToken,
+  });
+
+  // return resp.json({ ok: "Everything went ok", access_token, refresh_token });
 };
 
 const refresh = (req = request, resp = response) => {

@@ -17,6 +17,11 @@ const CredentialsSchema = new Schema({
     type: String,
     required: true,
   },
+  refreshToken: {
+    type: String,
+    default: null,
+    unique: true,
+  },
 });
 
 const CredentialsModel = model("Credential", CredentialsSchema);
