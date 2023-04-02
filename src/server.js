@@ -1,6 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
+const { trydbConection } = require("./database/db");
 const serverPaths = {
   auth: "/auth",
 };
@@ -11,6 +12,7 @@ class Server {
     this.app = express();
     this.applyAppMiddlewares();
     this.routes();
+    this.startDBConnection();
     this.startListening();
   }
 
@@ -30,6 +32,10 @@ class Server {
 
   routes() {
     this.app.use(this.serverPaths.auth, require("./routes/credentials"));
+  }
+
+  startDBConnection() {
+    trydbConection();
   }
 }
 
