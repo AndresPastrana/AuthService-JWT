@@ -7,6 +7,7 @@ const {
   refresh,
   logout,
 } = require("../controller/credentials");
+const { isValidToken } = require("../middlewares/auth");
 
 // TODO: export all middlewares from an index file
 const { existCredentials } = require("../middlewares/db-validators");
@@ -35,6 +36,6 @@ router.post(
 
 router.post("/refresh", [], refresh);
 
-router.post("/logout", [], logout);
+router.delete("/logout", [isValidToken], logout);
 
 module.exports = router;

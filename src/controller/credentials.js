@@ -76,8 +76,24 @@ const refresh = (req = request, resp = response) => {
   return resp.json({ ok: true });
 };
 
-const logout = (req = request, resp = response) => {
-  return resp.json({ ok: true });
+const logout = async (req = request, resp = response) => {
+  try {
+    const { uid } = req;
+    const query = { _id: uid, active: true };
+    const cred = await CredentialsModel.findOne(query);
+    if (!cred) {
+      return resp.status(403).json({ msg: "Invalid uid" });
+    }
+    cred.refreshToken = null;
+    await cred.save();
+
+    return resp.status(201).json({ ok: true });
+  } catch (error) {
+    console.log(error);
+    return resp.status(500).json({
+      error,
+    });
+  }
 };
 module.exports = {
   login,
