@@ -22,6 +22,14 @@ const CredentialsSchema = new Schema({
     default: null,
     unique: true,
   },
+  active: {
+    type: Boolean,
+    default: true,
+  },
+  isConfrimed: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const CredentialsModel = model("Credential", CredentialsSchema);

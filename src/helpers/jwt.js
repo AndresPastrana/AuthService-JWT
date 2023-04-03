@@ -1,6 +1,15 @@
 const jwt = require("jsonwebtoken");
 
-const generateToken = (payload, type) => {
+const validsTypes = {
+  access_token: "access",
+  refresh_token: "refresh",
+};
+
+const generateToken = (payload, type = "") => {
+  if (!Object.values(validsTypes).includes(type)) {
+    throw new Error("type argument is rquired");
+  }
+
   return new Promise((resolve, reject) => {
     let options = {};
     let SECRET;

@@ -23,7 +23,15 @@ router.post(
   ],
   register
 );
-router.post("/login", [], login);
+router.post(
+  "/login",
+  [
+    body("email", "Invalid emial").isEmail(),
+    body("password", "Password is required").notEmpty(),
+    validate,
+  ],
+  login
+);
 
 router.post("/refresh", [], refresh);
 
